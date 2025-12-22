@@ -15,6 +15,7 @@ Claude Code Easy Suite 是一款基于 Wails + Go + React 开发的桌面 GUI �
     *   集成 **GLM (智谱)**、**Kimi (月之暗面)**、**豆包 (字节跳动)** 三大模型。
     *   支持独立保存每个模型的 API Key。
     *   **即时同步**：切换模型时，自动更新 `~/.claude/settings.json`、`~/.claude.json` 及系统环境变量 (`ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_BASE_URL`)。
+*   **🌍 多语言支持**：界面支持英文、简体中文、繁体中文、韩文、日文、德文及法文，支持根据操作系统语言自动切换。
 *   **🖱️ 系统托盘支持**：
     *   支持双击托盘图标显示主窗口。
     *   右键菜单支持快速切换模型、一键启动 Claude Code 及退出程序。

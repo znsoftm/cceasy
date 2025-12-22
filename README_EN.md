@@ -15,6 +15,7 @@ This application is specifically integrated with popular programming models (GLM
     *   Integrated with **GLM**, **Kimi**, and **Doubao** models.
     *   Supports independent storage of API Keys for each model.
     *   **Instant Sync**: Automatically updates `~/.claude/settings.json`, `~/.claude.json`, and system environment variables (`ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_BASE_URL`) when switching models.
+*   **🌍 Multi-language Support**: Interface supports English, Simplified Chinese, Traditional Chinese, Korean, Japanese, German, and French, with automatic switching based on OS language.
 *   **🖱️ System Tray Support**:
     *   Double-click the tray icon to show the main window.
     *   Right-click menu for quick model switching, one-click Claude Code launch, and quitting the application.
