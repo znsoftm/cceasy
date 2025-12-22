@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -71,10 +72,13 @@ func (a *App) CheckEnvironment() {
 		
 		npmPath := "npm"
 		// Check for node
-		if err := exec.Command("node", "--version").Run(); err != nil {
+		nodeCmd := exec.Command("node", "--version")
+		nodeCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		if err := nodeCmd.Run(); err != nil {
 			a.log("Node.js not found. Installing via Winget (this may take a while)...")
 			// Try installing Node.js
 			cmd := exec.Command("winget", "install", "-e", "--id", "OpenJS.NodeJS", "--silent", "--accept-package-agreements", "--accept-source-agreements")
+			cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 			// Create a window specifically for winget interaction if strictly needed, but silent is better.
 			// However, winget often requires admin. This might fail if not run as admin.
 			// We will try.
@@ -95,10 +99,12 @@ func (a *App) CheckEnvironment() {
 		a.log("Installing/Updating Claude Code (npm install -g @anthropic-ai/claude-code)...")
 		
 		installCmd := exec.Command(npmPath, "install", "-g", "@anthropic-ai/claude-code")
+		installCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 		if out, err := installCmd.CombinedOutput(); err != nil {
 			// If npmPath failed, try absolute path just in case
 			if npmPath == "npm" {
 				installCmd = exec.Command(`C:\Program Files\nodejs\npm.cmd`, "install", "-g", "@anthropic-ai/claude-code")
+				installCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 				if out2, err2 := installCmd.CombinedOutput(); err2 != nil {
 					a.log("Failed to install Claude Code: " + string(out) + " / " + string(out2))
 				} else {
@@ -263,8 +269,13 @@ func (a *App) syncToSystemEnv(config AppConfig) {
 	}
 
 	// Set persistent environment variables on Windows
-	exec.Command("setx", "ANTHROPIC_AUTH_TOKEN", selectedModel.ApiKey).Run()
-	exec.Command("setx", "ANTHROPIC_BASE_URL", baseUrl).Run()
+	cmd1 := exec.Command("setx", "ANTHROPIC_AUTH_TOKEN", selectedModel.ApiKey)
+	cmd1.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd1.Run()
+
+	cmd2 := exec.Command("setx", "ANTHROPIC_BASE_URL", baseUrl)
+	cmd2.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd2.Run()
 }
 
 func (a *App) LoadConfig() (AppConfig, error) {
@@ -327,9 +338,8 @@ func (a *App) LoadConfig() (AppConfig, error) {
 }
 
 func (a *App) SaveConfig(config AppConfig) error {
-	// Sync to Claude Code settings and System Env
+	// Sync to Claude Code settings
 	a.syncToClaudeSettings(config)
-	a.syncToSystemEnv(config)
 
 	path, err := a.getConfigPath()
 	if err != nil {
