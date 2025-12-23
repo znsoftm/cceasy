@@ -42,7 +42,7 @@ const translations: any = {
         "custom": "Custom"
     },
     "zh-Hans": {
-        "title": "Claude Code 简易套件",
+        "title": "Claude Code Easy Suite",
         "about": "关于",
         "manual": "使用说明",
         "cs146s": "CS146s 中文版",
@@ -71,7 +71,7 @@ const translations: any = {
         "custom": "自定义"
     },
     "zh-Hant": {
-        "title": "Claude Code 簡易套件",
+        "title": "Claude Code Easy Suite",
         "about": "關於",
         "manual": "使用說明",
         "cs146s": "CS146s 中文版",
@@ -100,7 +100,7 @@ const translations: any = {
         "custom": "自定義"
     },
     "ko": {
-        "title": "Claude Code 이지 스위트",
+        "title": "Claude Code Easy Suite",
         "about": "정보",
         "manual": "매뉴얼",
         "cs146s": "CS146s CN",
@@ -129,7 +129,7 @@ const translations: any = {
         "custom": "사용자 정의"
     },
     "ja": {
-        "title": "Claude Code イージー・スイート",
+        "title": "Claude Code Easy Suite",
         "about": "バージョン情報",
         "manual": "マニュアル",
         "cs146s": "CS146s CN",
@@ -187,7 +187,7 @@ const translations: any = {
         "custom": "Benutzerdefiniert"
     },
     "fr": {
-        "title": "Suite Facile Claude Code",
+        "title": "Claude Code Easy Suite",
         "about": "À propos",
         "manual": "Manuel",
         "cs146s": "CS146s CN",
@@ -425,7 +425,33 @@ function App() {
 
             <div className="header">
                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <h2>{t("title")}</h2>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                            <div style={{position: 'absolute', width: '32px', height: '32px', background: 'rgba(168, 85, 247, 0.4)', filter: 'blur(8px)', borderRadius: '50%'}}></div>
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{position: 'relative'}}>
+                                <rect width="24" height="24" rx="7" fill="url(#vibe_grad)" />
+                                <path d="M8 10L5 12.5L8 15" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M16 10L19 12.5L16 15" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M13.5 8L10.5 17" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <defs>
+                                    <linearGradient id="vibe_grad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                                        <stop stopColor="#F472B6" />
+                                        <stop offset="0.5" stopColor="#A855F7" />
+                                        <stop offset="1" stopColor="#6366F1" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                        <h2 style={{
+                            margin: 0, 
+                            fontSize: '1.25rem',
+                            fontWeight: 'bold',
+                            background: 'linear-gradient(135deg, #F472B6 0%, #A855F7 50%, #6366F1 100%)', 
+                            WebkitBackgroundClip: 'text', 
+                            WebkitTextFillColor: 'transparent',
+                            filter: 'drop-shadow(0 2px 4px rgba(168, 85, 247, 0.2))'
+                        }}>{t("title")}</h2>
+                    </div>
                     <div style={{display: 'flex', gap: '10px', alignItems: 'center', '--wails-draggable': 'no-drag', zIndex: 1000, position: 'relative'} as any}>
                         <select
                             value={lang}

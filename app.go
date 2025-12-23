@@ -129,11 +129,11 @@ func (a *App) syncToClaudeSettings(config AppConfig) error {
 		env["ANTHROPIC_MODEL"] = "doubao-seed-code-preview-latest"
 	case "minimax":
 		env["ANTHROPIC_BASE_URL"] = "https://api.minimaxi.com/anthropic"
-		env["ANTHROPIC_DEFAULT_HAIKU_MODEL"] = "MiniMax-M2"
-		env["ANTHROPIC_DEFAULT_OPUS_MODEL"] = "MiniMax-M2"
-		env["ANTHROPIC_DEFAULT_SONNET_MODEL"] = "MiniMax-M2"
-		env["ANTHROPIC_MODEL"] = "MiniMax-M2"
-		env["ANTHROPIC_SMALL_FAST_MODEL"] = "MiniMax-M2"
+		env["ANTHROPIC_DEFAULT_HAIKU_MODEL"] = "MiniMax-M2.1"
+		env["ANTHROPIC_DEFAULT_OPUS_MODEL"] = "MiniMax-M2.1"
+		env["ANTHROPIC_DEFAULT_SONNET_MODEL"] = "MiniMax-M2.1"
+		env["ANTHROPIC_MODEL"] = "MiniMax-M2.1"
+		env["ANTHROPIC_SMALL_FAST_MODEL"] = "MiniMax-M2.1"
 		env["API_TIMEOUT_MS"] = "3000000"
 		env["CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC"] = "1"
 	default:
