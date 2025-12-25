@@ -75,6 +75,21 @@ export namespace main {
 		}
 	}
 	
+	
+	export class UpdateResult {
+	    has_update: boolean;
+	    latest_version: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new UpdateResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.has_update = source["has_update"];
+	        this.latest_version = source["latest_version"];
+	    }
+	}
 
 }
 

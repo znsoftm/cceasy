@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import './App.css';
 import {buildNumber} from './version';
-import {LoadConfig, SaveConfig, CheckEnvironment, ResizeWindow, LaunchClaude, SelectProjectDir, SetLanguage, GetUserHomeDir} from "../wailsjs/go/main/App";
+import {LoadConfig, SaveConfig, CheckEnvironment, ResizeWindow, LaunchClaude, SelectProjectDir, SetLanguage, GetUserHomeDir, CheckUpdate} from "../wailsjs/go/main/App";
 import {WindowHide, EventsOn, EventsOff, BrowserOpenURL} from "../wailsjs/runtime";
 import {main} from "../wailsjs/go/models";
 
@@ -11,6 +11,8 @@ const subscriptionUrls: {[key: string]: string} = {
     "doubao": "https://www.volcengine.com/activity/codingplan",
     "minimax": "https://platform.minimaxi.com/user-center/payment/coding-plan"
 };
+
+const APP_VERSION = "1.2";
 
 const translations: any = {
     "en": {
@@ -46,7 +48,11 @@ const translations: any = {
         "syncing": "Syncing to Claude Code...",
         "switched": "Model switched & synced!",
         "langName": "English",
-        "custom": "Custom"
+        "custom": "Custom",
+        "checkUpdate": "Check Update",
+        "noUpdate": "No updates available",
+        "updateAvailable": "Update available: ",
+        "foundNewVersion": "Found new version"
     },
     "zh-Hans": {
         "title": "Claude Code Easy Suite",
@@ -81,7 +87,11 @@ const translations: any = {
         "syncing": "正在同步到 Claude Code...",
         "switched": "模型已切换并同步！",
         "langName": "简体中文",
-        "custom": "自定义"
+        "custom": "自定义",
+        "checkUpdate": "检查更新",
+        "noUpdate": "无可用更新",
+        "updateAvailable": "发现新版本: ",
+        "foundNewVersion": "发现新版本"
     },
     "zh-Hant": {
         "title": "Claude Code Easy Suite",
@@ -270,6 +280,8 @@ function App() {
     const [showAbout, setShowAbout] = useState(false);
     const [showModelSettings, setShowModelSettings] = useState(false);
     const [showProjectManager, setShowProjectManager] = useState(false);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [updateResult, setUpdateResult] = useState<any>(null);
     const [projectOffset, setProjectOffset] = useState(0);
     const [tempProjects, setTempProjects] = useState<any[]>([]); // Local state for project manager
     const [managerStatus, setManagerStatus] = useState("");
@@ -352,7 +364,7 @@ function App() {
     };
 
     const t = (key: string) => {
-        return translations[lang][key] || key;
+        return translations[lang][key] || translations["en"][key] || key;
     };
 
     const handleApiKeyChange = (newKey: string) => {
@@ -680,6 +692,24 @@ function App() {
                             onClick={handleOpenManual}
                         >
                             {t("manual")}
+                        </button>
+                        <button 
+                            className="btn-link" 
+                            onClick={() => {
+                                setStatus(t("checkUpdate") + "...");
+                                CheckUpdate(APP_VERSION).then((result: any) => {
+                                    setUpdateResult(result);
+                                    setShowUpdateModal(true);
+                                    setStatus("");
+                                    if (result.has_update) {
+                                        BrowserOpenURL("https://github.com/RapidAI/cceasy/releases");
+                                    }
+                                }).catch((err: any) => {
+                                    setStatus("Error: " + err);
+                                });
+                            }}
+                        >
+                            {t("checkUpdate")}
                         </button>
                         <button 
                             className="btn-link" 
@@ -1060,12 +1090,39 @@ function App() {
                 </div>
             )}
 
+            {showUpdateModal && (
+                <div className="modal-overlay" onClick={() => setShowUpdateModal(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{width: '320px'}}>
+                        <button className="modal-close" onClick={() => setShowUpdateModal(false)}>&times;</button>
+                        <h3 style={{marginTop: 0, color: '#3b82f6'}}>{t("checkUpdate")}</h3>
+                        <div style={{margin: '20px 0', fontSize: '1rem'}}>
+                            {updateResult?.has_update ? (
+                                <div style={{color: '#10b981', fontWeight: 600}}>
+                                    {t("updateAvailable")} {updateResult.latest_version}
+                                </div>
+                            ) : (
+                                <div style={{color: '#6b7280'}}>
+                                    {t("noUpdate")}
+                                </div>
+                            )}
+                        </div>
+                        <button 
+                            className="btn-primary" 
+                            style={{width: '100%'}}
+                            onClick={() => setShowUpdateModal(false)}
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {showAbout && (
                 <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowAbout(false); }}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setShowAbout(false)}>&times;</button>
                         <h3 style={{marginTop: 0, color: '#3b82f6'}}>Claude Code Easy Suite</h3>
-                        <p style={{color: '#6b7280', margin: '5px 0'}}>Version V1.1 Beta (Build {buildNumber})</p>
+                        <p style={{color: '#6b7280', margin: '5px 0'}}>Version V{APP_VERSION} Beta (Build {buildNumber})</p>
                         <p style={{color: '#6b7280', margin: '5px 0'}}>Author: Dr. Daniel</p>
                         <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
                             <button 

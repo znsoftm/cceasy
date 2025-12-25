@@ -4,6 +4,8 @@ import {main} from '../models';
 
 export function CheckEnvironment():Promise<void>;
 
+export function CheckUpdate(arg1:string):Promise<main.UpdateResult>;
+
 export function GetUserHomeDir():Promise<string>;
 
 export function Greet(arg1:string):Promise<string>;
