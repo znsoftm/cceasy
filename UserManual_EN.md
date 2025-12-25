@@ -1,6 +1,6 @@
 # Claude Code Easy Suite User Manual
 
-Welcome to **Claude Code Easy Suite**! This tool is designed to simplify the configuration, model switching, and startup process for Anthropic's `claude-code` command-line tool.
+Welcome to **Claude Code Easy Suite**! This tool is designed to simplify the configuration, multi-project management, and startup process for Anthropic's `claude-code` command-line tool.
 
 Here is a detailed operation guide:
 
@@ -10,55 +10,45 @@ When you run the program for the first time, it will automatically check your sy
 *   **Claude Code**: The program will automatically install or update `@anthropic-ai/claude-code` to the latest version.
 *   **Note**: If an automatic installation occurs, the program may restart automatically to apply changes.
 
-## 2. Configure Model Parameters (Model Settings)
-Before use, you need to configure an API Key for at least one model provider.
+## 2. Model Settings
+Before use, you need to configure an API Key for at least one model.
 
-1.  Navigate to the **"Model Settings"** area at the bottom of the main interface.
-2.  Click the tabs to select your desired model provider:
-    *   **GLM** (Zhipu AI)
-    *   **Kimi** (Moonshot AI)
-    *   **Doubao** (ByteDance)
-    *   **Custom** (Other compatible models)
+1.  Click the **"⚙️ Model Settings"** button to the right of the **"Model Selection"** header.
+2.  Select your desired provider in the popup: **GLM**, **Kimi**, **Doubao**, **MiniMax**, or **Custom**.
+3.  **API Key**: Paste your API Key. A **blue underline** under the model button indicates a successful configuration.
+4.  **Save**: Click **"Save & Close"** to apply changes.
 
-### 2.1 Get and Fill API Key
-*   **Fill Key**: Paste your API Key into the **"API Key"** input box.
-*   **Don't have a Key?**: Click the **"Get Key"** button to the right of the input box. The program will open the provider's official console page where you can register and apply for an API Key.
+> **Tip**: Settings will open automatically if no keys are found on startup. Models without an API key cannot be activated.
 
-### 2.2 Custom Model Configuration
-If you use a model other than the three listed above (or via a proxy service), select the **"Custom"** tab:
-*   **Model Name**: Enter the target model ID, e.g., `claude-3-5-sonnet-20241022` or `gpt-4o`.
-*   **API Key**: Enter your key.
-*   **API Endpoint**: Enter the interface URL, e.g., `https://api.example.com/v1`.
+## 3. Multi-Project Management
+You can manage multiple coding projects with independent directory paths and mode settings.
 
-> **Tip**: All changes are temporarily cached. Click the **"Save Changes"** button at the bottom right to persist your settings.
+### 3.1 Switching Projects
+*   View project tabs in the **"Vibe Coding"** area.
+*   Click a project name to switch instantly.
+*   If you have more than 5 projects, use the **"◀"** or **"▶"** arrows to scroll.
 
-## 3. Activate a Model (Active Model)
-After configuration, you need to tell the program which model to use.
+### 3.2 Project Management Modal
+Click the **"📂 Manage Projects"** button next to the **"Vibe Coding"** header:
+*   **Add Project**: Click "+ Add New Project". New projects default to your User Home directory.
+*   **Rename**: Edit names directly. The system ensures each project name is unique.
+*   **Delete**: Click the "Delete" button next to a project.
+*   **Save**: Click **"Save & Close"** to commit all modifications.
 
-1.  In the **"Active Model"** area at the top.
-2.  Click the button for the model you just configured (e.g., GLM, Kimi...).
-3.  The button will highlight, indicating activation. System environment variables are now synced.
-
-## 4. Set Project Directory
-Specify the workspace where Claude Code will run (your codebase folder).
-
-1.  In the **"Launch"** area, find the **"Project Directory"** field.
-2.  The default path is your User Home directory.
-3.  Click the **"Change"** button.
-4.  Select your project folder in the dialog box.
+## 4. Setting Project Parameters
+After selecting a project tab, configure its specific settings:
+1.  **Project Directory**: Displays the folder path for the current project. Click **"Change"** to pick a new one.
+2.  **Yolo Mode**:
+    *   Check the **"Yolo Mode"** box.
+    *   This mode skips all permission prompts. **Use with caution and only if you trust the model's output.**
 
 ## 5. Launch Claude Code
-Ready to code!
-
-1.  **Yolo Mode (Optional)**:
-    *   Check the **"Yolo Mode"** box.
-    *   This adds the `--dangerously-skip-permissions` parameter. Claude will no longer ask for permission for each file read/write or command execution. **Use with caution and only if you trust the model's output.**
-2.  Click the **"Launch Claude Code"** button at the bottom.
-3.  A new command-line window will pop up and automatically enter the Claude Code interactive interface.
+1.  Ensure you have selected a valid **Model** (with blue underline) and **Project** (with valid path).
+2.  Click the **"Launch Claude Code"** button.
+3.  If the project directory is not set, a red error will appear in the status bar, and launch will be blocked.
+4.  A new terminal window will open with the Claude Code interactive interface.
 
 ## 6. Other Features
-*   **Language Switch**: Click the language selector in the title bar (e.g., "English") to cycle through English, Chinese (Simplified/Traditional), Japanese, Korean, German, and French.
-*   **System Tray**: The program stays in the tray when running. Right-click the tray icon to:
-    *   Quickly switch models.
-    *   One-click launch Claude Code.
-    *   Show/Hide the main window.
+*   **Status Bar**: The bottom area shows real-time feedback (e.g., "Saved successfully"). Errors are highlighted in red.
+*   **Language Switch**: Change languages in the title bar (supports English, Chinese, Japanese, Korean, German, and French).
+*   **System Tray**: Right-click the tray icon for quick access to model switching, launching, or hiding the window.

@@ -27,10 +27,19 @@ type ModelConfig struct {
 	IsCustom  bool   `json:"is_custom"`
 }
 
+type ProjectConfig struct {
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Path     string `json:"path"`
+	YoloMode bool   `json:"yolo_mode"`
+}
+
 type AppConfig struct {
-	CurrentModel string        `json:"current_model"`
-	ProjectDir   string        `json:"project_dir"`
-	Models       []ModelConfig `json:"models"`
+	CurrentModel   string          `json:"current_model"`
+	ProjectDir     string          `json:"project_dir"` // Deprecated, kept for migration
+	Models         []ModelConfig   `json:"models"`
+	Projects       []ProjectConfig `json:"projects"`
+	CurrentProject string          `json:"current_project"` // ID of the current project
 }
 
 // NewApp creates a new App application struct
@@ -74,6 +83,11 @@ func (a *App) SelectProjectDir() string {
 		return ""
 	}
 	return selection
+}
+
+func (a *App) GetUserHomeDir() string {
+	home, _ := os.UserHomeDir()
+	return home
 }
 
 func (a *App) syncToClaudeSettings(config AppConfig) error {
@@ -214,7 +228,15 @@ func (a *App) LoadConfig() (AppConfig, error) {
 		// Create default config
 		home, _ := os.UserHomeDir()
 		defaultConfig := AppConfig{
-			ProjectDir: home,
+			Projects: []ProjectConfig{
+				{
+					Id:       "default",
+					Name:     "Project 1",
+					Path:     home,
+					YoloMode: false,
+				},
+			},
+			CurrentProject: "default",
 			Models: []ModelConfig{
 				{
 					ModelName: "GLM",
@@ -267,8 +289,33 @@ func (a *App) LoadConfig() (AppConfig, error) {
 		config.CurrentModel = config.Models[0].ModelName
 	}
 	
-	if config.ProjectDir == "" {
-		config.ProjectDir, _ = os.UserHomeDir()
+	// Migration: If Projects list is empty but ProjectDir exists
+	if len(config.Projects) == 0 {
+		pDir := config.ProjectDir
+		if pDir == "" {
+			pDir, _ = os.UserHomeDir()
+		}
+		config.Projects = []ProjectConfig{
+			{
+				Id:       "default",
+				Name:     "Project 1",
+				Path:     pDir,
+				YoloMode: false, // Default to false for safety
+			},
+		}
+		config.CurrentProject = "default"
+	}
+	
+	// Ensure CurrentProject is valid
+	validProj := false
+	for _, p := range config.Projects {
+		if p.Id == config.CurrentProject {
+			validProj = true
+			break
+		}
+	}
+	if !validProj && len(config.Projects) > 0 {
+		config.CurrentProject = config.Projects[0].Id
 	}
 
 	// Ensure ModelUrls are populated and migrate names for existing configs

@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import './App.css';
-import {LoadConfig, SaveConfig, CheckEnvironment, ResizeWindow, LaunchClaude, SelectProjectDir, SetLanguage} from "../wailsjs/go/main/App";
+import {LoadConfig, SaveConfig, CheckEnvironment, ResizeWindow, LaunchClaude, SelectProjectDir, SetLanguage, GetUserHomeDir} from "../wailsjs/go/main/App";
 import {WindowHide, EventsOn, EventsOff, BrowserOpenURL} from "../wailsjs/runtime";
 import {main} from "../wailsjs/go/models";
 
@@ -31,9 +31,15 @@ const translations: any = {
         "getKey": "Get API Key",
         "enterKey": "Enter API Key",
         "apiEndpoint": "API Endpoint",
-        "saveChanges": "Save Changes",
+        "saveChanges": "Save & Close",
         "saving": "Saving...",
         "saved": "Saved successfully!",
+        "manageProjects": "Manage Projects",
+        "projectManagement": "Project Management",
+        "projectName": "Project Name",
+        "delete": "Delete",
+        "addNewProject": "+ Add New Project",
+        "projectDirError": "Please set a valid Project Directory!",
         "initializing": "Initializing...",
         "loadingConfig": "Loading config...",
         "syncing": "Syncing to Claude Code...",
@@ -53,16 +59,22 @@ const translations: any = {
         "yoloMode": "Yolo 模式",
         "dangerouslySkip": "(危险：跳过权限检查)",
         "launchBtn": "启动 Claude Code",
-        "activeModel": "当前模型",
+        "activeModel": "模型选择",
         "modelSettings": "模型设置",
         "modelName": "模型名称",
         "apiKey": "API 密钥",
         "getKey": "获取API密钥",
         "enterKey": "输入 API Key",
         "apiEndpoint": "API 端点",
-        "saveChanges": "保存更改",
+        "saveChanges": "保存并关闭",
         "saving": "保存中...",
         "saved": "保存成功！",
+        "manageProjects": "项目管理",
+        "projectManagement": "项目管理",
+        "projectName": "项目名称",
+        "delete": "删除",
+        "addNewProject": "+ 添加新项目",
+        "projectDirError": "请设置有效的项目目录！",
         "initializing": "初始化中...",
         "loadingConfig": "加载配置中...",
         "syncing": "正在同步到 Claude Code...",
@@ -82,16 +94,22 @@ const translations: any = {
         "yoloMode": "Yolo 模式",
         "dangerouslySkip": "(危險：跳過權限檢查)",
         "launchBtn": "啟動 Claude Code",
-        "activeModel": "當前模型",
+        "activeModel": "模型選擇",
         "modelSettings": "模型設定",
         "modelName": "模型名稱",
         "apiKey": "API 金鑰",
         "getKey": "獲取API密鑰",
         "enterKey": "輸入 API Key",
         "apiEndpoint": "API 端點",
-        "saveChanges": "儲存變更",
+        "saveChanges": "儲存並關閉",
         "saving": "儲存中...",
         "saved": "儲存成功！",
+        "manageProjects": "專案管理",
+        "projectManagement": "專案管理",
+        "projectName": "專案名稱",
+        "delete": "刪除",
+        "addNewProject": "+ 新增專案",
+        "projectDirError": "請設置有效的專案目錄！",
         "initializing": "初始化中...",
         "loadingConfig": "載入設定中...",
         "syncing": "正在同步到 Claude Code...",
@@ -111,16 +129,22 @@ const translations: any = {
         "yoloMode": "Yolo 모드",
         "dangerouslySkip": "(위험: 권한 확인 건너뛰기)",
         "launchBtn": "Claude Code 시작",
-        "activeModel": "활성 모델",
+        "activeModel": "모델 선택",
         "modelSettings": "모델 설정",
         "modelName": "모델 이름",
         "apiKey": "API 키",
         "getKey": "API 키 발급",
         "enterKey": "API 키 입력",
         "apiEndpoint": "API 엔드포인트",
-        "saveChanges": "변경 사항 저장",
+        "saveChanges": "저장 및 닫기",
         "saving": "저장 중...",
         "saved": "저장 성공!",
+        "manageProjects": "프로젝트 관리",
+        "projectManagement": "프로젝트 관리",
+        "projectName": "프로젝트 이름",
+        "delete": "삭제",
+        "addNewProject": "+ 새 프로젝트 추가",
+        "projectDirError": "유효한 프로젝트 디렉토리를 설정해주세요!",
         "initializing": "초기화 중...",
         "loadingConfig": "설정 불러오는 중...",
         "syncing": "Claude Code와 동기화 중...",
@@ -140,16 +164,22 @@ const translations: any = {
         "yoloMode": "Yolo モード",
         "dangerouslySkip": "(危険：権限チェックをスキップ)",
         "launchBtn": "Claude Code を起動",
-        "activeModel": "アクティブなモデル",
+        "activeModel": "モデル選択",
         "modelSettings": "モデル設定",
         "modelName": "モデル名",
         "apiKey": "API キー",
         "getKey": "API キーを取得",
         "enterKey": "API キーを入力",
         "apiEndpoint": "API エンドポイント",
-        "saveChanges": "変更を保存",
+        "saveChanges": "保存して閉じる",
         "saving": "保存中...",
         "saved": "保存しました！",
+        "manageProjects": "プロジェクト管理",
+        "projectManagement": "プロジェクト管理",
+        "projectName": "プロジェクト名",
+        "delete": "削除",
+        "addNewProject": "+ 新規プロジェクト追加",
+        "projectDirError": "有効なプロジェクトディレクトリを設定してください！",
         "initializing": "初期化中...",
         "loadingConfig": "設定を読み込み中...",
         "syncing": "Claude Code に同期中...",
@@ -176,9 +206,15 @@ const translations: any = {
         "getKey": "API-Schlüssel erhalten",
         "enterKey": "API-Schlüssel eingeben",
         "apiEndpoint": "API-Endpunkt",
-        "saveChanges": "Änderungen speichern",
+        "saveChanges": "Speichern & Schließen",
         "saving": "Speichern...",
         "saved": "Erfolgreich gespeichert!",
+        "manageProjects": "Projektverwaltung",
+        "projectManagement": "Projektverwaltung",
+        "projectName": "Projektname",
+        "delete": "Löschen",
+        "addNewProject": "+ Neues Projekt hinzufügen",
+        "projectDirError": "Bitte gültiges Projektverzeichnis festlegen!",
         "initializing": "Initialisiere...",
         "loadingConfig": "Lade Konfiguration...",
         "syncing": "Synchronisiere mit Claude Code...",
@@ -205,9 +241,15 @@ const translations: any = {
         "getKey": "Obtenir une clé API",
         "enterKey": "Entrer la clé API",
         "apiEndpoint": "Point de terminaison API",
-        "saveChanges": "Enregistrer",
+        "saveChanges": "Enregistrer et Fermer",
         "saving": "Enregistrement...",
         "saved": "Enregistré avec succès !",
+        "manageProjects": "Gestion de projet",
+        "projectManagement": "Gestion de projet",
+        "projectName": "Nom du projet",
+        "delete": "Supprimer",
+        "addNewProject": "+ Ajouter un nouveau projet",
+        "projectDirError": "Veuillez définir un répertoire de projet valide !",
         "initializing": "Initialisation...",
         "loadingConfig": "Chargement de la configuration...",
         "syncing": "Synchronisation avec Claude Code...",
@@ -225,6 +267,11 @@ function App() {
     const [envLog, setEnvLog] = useState("Initializing...");
     const [yoloMode, setYoloMode] = useState(false);
     const [showAbout, setShowAbout] = useState(false);
+    const [showModelSettings, setShowModelSettings] = useState(false);
+    const [showProjectManager, setShowProjectManager] = useState(false);
+    const [projectOffset, setProjectOffset] = useState(0);
+    const [tempProjects, setTempProjects] = useState<any[]>([]); // Local state for project manager
+    const [managerStatus, setManagerStatus] = useState("");
     const [lang, setLang] = useState("en");
 
     useEffect(() => {
@@ -250,7 +297,7 @@ function App() {
         // Environment Check Logic
         const logHandler = (msg: string) => setEnvLog(msg);
         const doneHandler = () => {
-            ResizeWindow(792, 676);
+            ResizeWindow(792, 440);
             setIsLoading(false);
         };
 
@@ -265,6 +312,12 @@ function App() {
             if (cfg && cfg.models) {
                 const idx = cfg.models.findIndex(m => m.model_name === cfg.current_model);
                 if (idx !== -1) setActiveTab(idx);
+
+                // Check if any model has an API key configured
+                const hasAnyApiKey = cfg.models.some(m => m.api_key && m.api_key.trim() !== "");
+                if (!hasAnyApiKey) {
+                    setShowModelSettings(true);
+                }
             }
         }).catch(err => {
             setStatus("Error loading config: " + err);
@@ -283,6 +336,14 @@ function App() {
             EventsOff("env-check-done");
         };
     }, []);
+
+    // Initialize temp projects when manager opens
+    useEffect(() => {
+        if (showProjectManager && config) {
+            setTempProjects(JSON.parse(JSON.stringify(config.projects)));
+            setManagerStatus("");
+        }
+    }, [showProjectManager, config]);
 
     const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setLang(e.target.value);
@@ -324,6 +385,20 @@ function App() {
 
     const handleModelSwitch = (modelName: string) => {
         if (!config) return;
+        
+        // Find the model to verify if it has an API key
+        const targetModel = config.models.find(m => m.model_name === modelName);
+        if (!targetModel || !targetModel.api_key || targetModel.api_key.trim() === "") {
+            setStatus("Please configure API Key first!");
+            // Set active tab to this model so the user lands on the correct settings page
+            const idx = config.models.findIndex(m => m.model_name === modelName);
+            if (idx !== -1) setActiveTab(idx);
+            
+            setShowModelSettings(true);
+            setTimeout(() => setStatus(""), 2000);
+            return;
+        }
+
         const newConfig = new main.AppConfig({...config, current_model: modelName});
         setConfig(newConfig);
         setStatus(t("syncing"));
@@ -335,15 +410,130 @@ function App() {
         });
     };
 
+    // Project Management Functions
+    const getCurrentProject = () => {
+        if (!config || !config.projects) return null;
+        return config.projects.find((p: any) => p.id === config.current_project) || config.projects[0];
+    };
+
+    const handleProjectSwitch = (projectId: string) => {
+        if (!config) return;
+        const newConfig = new main.AppConfig({...config, current_project: projectId});
+        setConfig(newConfig);
+        SaveConfig(newConfig);
+    };
+
     const handleSelectDir = () => {
         if (!config) return;
         SelectProjectDir().then((dir) => {
             if (dir && dir.length > 0) {
-                const newConfig = new main.AppConfig({...config, project_dir: dir});
+                const currentProj = getCurrentProject();
+                if (!currentProj) return;
+
+                const newProjects = config.projects.map((p: any) => 
+                    p.id === currentProj.id ? { ...p, path: dir } : p
+                );
+                
+                // Update deprecated project_dir for backward compat if needed, but primarily use projects list
+                const newConfig = new main.AppConfig({...config, projects: newProjects, project_dir: dir});
                 setConfig(newConfig);
-                SaveConfig(newConfig); // Auto save project dir change
+                SaveConfig(newConfig);
             }
         });
+    };
+
+    const handleYoloChange = (checked: boolean) => {
+        if (!config) return;
+        const currentProj = getCurrentProject();
+        if (!currentProj) return;
+
+        const newProjects = config.projects.map((p: any) => 
+            p.id === currentProj.id ? { ...p, yolo_mode: checked } : p
+        );
+        
+        const newConfig = new main.AppConfig({...config, projects: newProjects});
+        setConfig(newConfig);
+        SaveConfig(newConfig);
+    };
+
+    // Temp Project Manager Handlers (Local State)
+    const validateTempProjects = (projects: any[]) => {
+        const names = projects.map(p => p.name.trim());
+        if (names.some(n => n === "")) {
+            setManagerStatus("Error: Project name cannot be empty.");
+            return false;
+        }
+        const hasDuplicate = names.some((name, index) => names.indexOf(name) !== index);
+        if (hasDuplicate) {
+            setManagerStatus("Error: Duplicate project names are not allowed.");
+            return false;
+        }
+        setManagerStatus("");
+        return true;
+    };
+
+    const handleAddTempProject = async () => {
+        let baseName = "Project";
+        let newName = "";
+        let i = 1;
+        // Search for a truly unique name
+        while (true) {
+            newName = `${baseName} ${i}`;
+            // eslint-disable-next-line
+            if (!tempProjects.some((p: any) => p.name === newName)) break;
+            i++;
+        }
+
+        const homeDir = await GetUserHomeDir();
+        const newId = Math.random().toString(36).substr(2, 9);
+        const newProject = {
+            id: newId,
+            name: newName,
+            path: homeDir || "",
+            yolo_mode: false
+        };
+        const newList = [...tempProjects, newProject];
+        setTempProjects(newList);
+        validateTempProjects(newList);
+    };
+
+    const handleDeleteTempProject = (id: string) => {
+        if (tempProjects.length <= 1) return;
+        const newList = tempProjects.filter((p: any) => p.id !== id);
+        setTempProjects(newList);
+        validateTempProjects(newList);
+    };
+
+    const handleRenameTempProject = (id: string, newName: string) => {
+        const newList = tempProjects.map((p: any) => 
+            p.id === id ? { ...p, name: newName } : p
+        );
+        setTempProjects(newList);
+        validateTempProjects(newList);
+    };
+
+    const saveProjectManagerChanges = () => {
+        if (!config) return;
+        if (!validateTempProjects(tempProjects)) return;
+        
+        // Determine current project ID (keep if exists, else first available)
+        let newCurrentId = config.current_project;
+        if (!tempProjects.find(p => p.id === newCurrentId)) {
+            newCurrentId = tempProjects.length > 0 ? tempProjects[0].id : "";
+        }
+
+        const newConfig = new main.AppConfig({
+            ...config, 
+            projects: tempProjects,
+            current_project: newCurrentId
+        });
+        
+        setConfig(newConfig);
+        SaveConfig(newConfig);
+        setShowProjectManager(false);
+        
+        // Adjust tabs offset if current selection is out of view, or just reset
+        if (tempProjects.length <= 5) setProjectOffset(0);
     };
 
     const handleOpenSubscribe = (modelName: string) => {
@@ -366,7 +556,10 @@ function App() {
         setStatus(t("saving"));
         SaveConfig(config).then(() => {
             setStatus(t("saved"));
-            setTimeout(() => setStatus(""), 2000);
+            setTimeout(() => {
+                setStatus("");
+                setShowModelSettings(false);
+            }, 1000);
         }).catch(err => {
             setStatus("Error saving: " + err);
         });
@@ -409,6 +602,8 @@ function App() {
     if (!config) return <div className="main-content" style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{t("loadingConfig")}</div>;
 
     const currentModelConfig = config.models[activeTab];
+    const currentProject = getCurrentProject();
+    const visibleProjects = config.projects ? config.projects.slice(projectOffset, projectOffset + 5) : [];
 
     return (
         <div id="App">
@@ -502,129 +697,370 @@ function App() {
             </div>
 
             <div className="main-content" style={{overflowY: currentModelConfig.is_custom ? 'auto' : 'hidden'}}>
-                <div style={{padding: '0 20px'}}>
-                    <h3 style={{fontSize: '0.9rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px'}}>{t("activeModel")}</h3>
-                </div>
-                <div className="model-switcher">
-                    {config.models.map((model) => (
-                        <button
-                            key={model.model_name}
-                            className={`model-btn ${config.current_model === model.model_name ? 'selected' : ''}`}
-                            onClick={() => handleModelSwitch(model.model_name)}
+                <div style={{
+                    backgroundColor: '#eff6ff', 
+                    margin: '0 10px 15px 10px', 
+                    padding: '10px 10px 15px 10px', 
+                    borderRadius: '12px',
+                    border: '1px solid rgba(59, 130, 246, 0.1)'
+                }}>
+                    <div style={{padding: '0 10px', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '5px'}}>
+                        <h3 style={{fontSize: '1.1rem', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '5px', marginTop: '-5px', textAlign: 'center'}}>{t("activeModel")}</h3>
+                        <button 
+                            className="btn-link" 
+                            onClick={() => setShowModelSettings(true)}
+                            style={{
+                                position: 'absolute', 
+                                right: '0', 
+                                borderColor: '#3b82f6', 
+                                color: '#3b82f6',
+                                fontSize: '0.8rem'
+                            }}
                         >
-                            {model.model_name}
+                            ⚙️ {t("modelSettings")}
                         </button>
-                    ))}
+                    </div>
+                    <div className="model-switcher" style={{justifyContent: 'center', padding: '0 10px', marginBottom: 0}}>
+                        {config.models.map((model) => (
+                            <button
+                                key={model.model_name}
+                                className={`model-btn ${config.current_model === model.model_name ? 'selected' : ''}`}
+                                onClick={() => handleModelSwitch(model.model_name)}
+                                style={{
+                                    textAlign: 'center',
+                                    borderBottom: (model.api_key && model.api_key.trim() !== "") ? '3px solid #3b82f6' : '1px solid var(--border-color)'
+                                }}
+                            >
+                                {model.model_name}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                <div style={{margin: '20px 20px', borderTop: '1px solid #e5e7eb'}}></div>
+                                                                                                                                <div style={{
 
-                <div style={{padding: '0 20px 20px 20px'}}>
-                    <div className="form-group">
-                        <label className="form-label">{t("projectDir")}</label>
-                        <div style={{display: 'flex', gap: '10px'}}>
-                            <input 
-                                type="text" 
-                                className="form-input"
-                                value={config.project_dir} 
-                                readOnly
-                                style={{backgroundColor: '#f9fafb', color: '#6b7280'}}
-                            />
-                            <button className="btn-primary" style={{padding: '10px 15px', whiteSpace: 'nowrap'}} onClick={handleSelectDir}>{t("change")}</button>
+                                                                                                                                    backgroundColor: '#eff6ff', 
+
+                                                                                                                                    margin: '0px 10px 0px 10px', 
+
+                                                                                                                                    padding: '10px 10px 10px 10px', 
+
+                                                                                                                                    borderRadius: '12px',
+
+                                                                                                                                    border: '1px solid rgba(59, 130, 246, 0.1)'
+
+                                                                                                                                }}>
+
+                                                                                                                                    <div style={{padding: '20px 10px 0 10px', position: 'relative'}}>
+
+                                                                                                                                        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '5px', position: 'relative'}}>
+
+                                                                                                                                            <h3 style={{fontSize: '1.1rem', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0, marginTop: '-10px', textAlign: 'center'}}>Vibe Coding</h3>
+                                                                        <button 
+                                                                            className="btn-link" 
+                                                                            onClick={() => setShowProjectManager(true)}
+                                                                            style={{
+                                                                                position: 'absolute', 
+                                                                                right: '0', 
+                                                                                borderColor: '#3b82f6', 
+                                                                                color: '#3b82f6',
+                                                                                fontSize: '0.8rem'
+                                                                            }}
+                                                                        >
+                                                                            📂 {t("manageProjects")}
+                                                                        </button>
+                                                                    </div>
+                                            
+                                                                                                                                                                                                            {/* Project Tabs */}
+                                            
+                                                                                                                                                                                                            <div className="tabs" style={{marginBottom: '2px', borderBottom: 'none', justifyContent: 'flex-start'}}>
+                                            
+                                                                                                                                                                                                                {projectOffset > 0 && (
+                                            
+                                                                                                                                                                                                                    <button 
+                                            
+                                                                                                                                                                                                                        className="tab-button" 
+                                            
+                                                                                                                                                                                                                        onClick={() => setProjectOffset(prev => Math.max(0, prev - 1))}
+                                            
+                                                                                                                                                                                                                        title="Previous Projects"
+                                            
+                                                                                                                                                                                                                    >
+                                            
+                                                                                                                                                                                                                        ◀
+                                            
+                                                                                                                                                                                                                    </button>
+                                            
+                                                                                                                                                                                                                )}
+                                            
+                                                                                                                                                                                                                {visibleProjects.map((proj: any) => (
+                                            
+                                                                                                                                                                                                                    <button
+                                            
+                                                                                                                                                                                                                        key={proj.id}
+                                            
+                                                                                                                                                                                                                        className={`tab-button ${config.current_project === proj.id ? 'active' : ''}`}
+                                            
+                                                                                                                                                                                                                        onClick={() => handleProjectSwitch(proj.id)}
+                                            
+                                                                                                                                                                                                                        style={{fontSize: '0.85rem', padding: '5px 10px'}}
+                                            
+                                                                                                                                                                                                                    >
+                                            
+                                                                                                                                                                                                                        {proj.name}
+                                            
+                                                                                                                                                                                                                    </button>
+                                            
+                                                                                                                                                                                                                ))}
+                                            
+                                                                                                                                                                                                                {config.projects && config.projects.length > projectOffset + 5 && (
+                                            
+                                                                                                                                                                                                                    <button 
+                                            
+                                                                                                                                                                                                                        className="tab-button" 
+                                            
+                                                                                                                                                                                                                        onClick={() => setProjectOffset(prev => (prev + 5 < config.projects.length ? prev + 1 : prev))}
+                                            
+                                                                                                                                                                                                                        title="Next Projects"
+                                            
+                                                                                                                                                                                                                    >
+                                            
+                                                                                                                                                                                                                        ▶
+                                            
+                                                                                                                                                                                                                    </button>
+                                            
+                                                                                                                                                                                                                )}
+                                            
+                                                                                                                                                                                                            </div>                                
+                                            
+                                                                                                                                                                                                    {currentProject && (
+                                            
+                                                                                                                                                                                                    <>
+                                            
+                                                                                                                                                                                                        <div className="form-group" style={{display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px'}}>
+                                            
+                                                                                                                                                                                                            <label className="form-label" style={{marginBottom: 0, whiteSpace: 'nowrap', textAlign: 'left'}}>{t("projectDir")}:</label>
+                                            
+                                                                                                                                                                                                            <div style={{display: 'flex', gap: '10px', flexGrow: 1}}>
+                                            
+                                                                                                                                                                                                                <input 
+                                            
+                                                                                                                                                                                                                    type="text" 
+                                            
+                                                                                                                                                                                                                    className="form-input"
+                                            
+                                                                                                                                                                                                                    value={currentProject.path} 
+                                            
+                                                                                                                                                                                                                    readOnly
+                                            
+                                                                                                                                                                                                                    style={{backgroundColor: '#f9fafb', color: '#6b7280', flexGrow: 1, textAlign: 'left'}}
+                                            
+                                                                                                                                                                                                                />
+                                            
+                                                                                                                                                                                                                <button className="btn-primary" style={{padding: '10px 15px', whiteSpace: 'nowrap'}} onClick={handleSelectDir}>{t("change")}</button>
+                                            
+                                                                                                                                                                                                            </div>
+                                            
+                                                                                                                                                                                                        </div>
+                                            
+                                                                                                                                                                            
+                                            
+                                                                                                                                                                                                        <div style={{marginBottom: '0px'}}>
+                                            
+                                                                                                                                                                                                            <label className="form-label" style={{display:'flex', alignItems:'center', cursor:'pointer'}}>
+                                            
+                                                                                                                                                                                                                <input 
+                                            
+                                                                                                                                                                                                                    type="checkbox" 
+                                            
+                                                                                                                                                                                                                    checked={currentProject.yolo_mode}
+                                            
+                                                                                                                                                                                                                    onChange={(e) => handleYoloChange(e.target.checked)}
+                                            
+                                                                                                                                                                                                                    style={{marginRight: '8px', transform: 'scale(1.2)'}}
+                                            
+                                                                                                                                                                                                                />
+                                            
+                                                                                                                                                                                                                <span style={{fontWeight: 600}}>{t("yoloMode")}</span> 
+                                            
+                                                                                                                                                                                                                <span style={{marginLeft:'8px', color:'#ef4444', fontSize:'0.85em'}}>{t("dangerouslySkip")}</span>
+                                            
+                                                                                                                                                                                                            </label>
+                                            
+                                                                                                                                                                                                        </div>
+                                            
+                                                                                                                                                                                                        <button className="btn-launch" style={{marginTop: '5px'}} onClick={() => {
+                                            
+                                                                                                                                                                                                            if (!currentProject.path || currentProject.path.trim() === "") {
+                                            
+                                                                                                                                                                                                                setStatus(t("projectDirError"));
+                                            
+                                                                                                                                                                                                                setTimeout(() => setStatus(""), 2000);
+                                            
+                                                                                                                                                                                                                return;
+                                            
+                                                                                                                                                                                                            }
+                                            
+                                                                                                                                                                                                            LaunchClaude(currentProject.yolo_mode, currentProject.path || "")
+                                            
+                                                                                                                                                                                                        }}>
+                                            
+                                                                                                                                                                                                            {t("launchBtn")}
+                                            
+                                                                                                                                                                                                        </button>
+                                            
+                                                                                                                                                                                                        <div style={{textAlign: 'center', marginTop: '2px', minHeight: '20px'}}>
+                                            
+                                                                                                                                                                                                            <span style={{fontSize: '0.9rem', color: (status.includes("Error") || status.includes("！") || status.includes("!") || status.includes("first")) ? '#ef4444' : '#10b981'}}>{status}</span>
+                                            
+                                                                                                                                                                                                        </div>
+                                            
+                                                                                                                                                                                                    </>
+                                            
+                                                                                                                                                                                                    )}                                    </div>
+                                </div>
+                
+                                        </div>
+                            
+                                        {/* Model Settings Modal */}            
+                                    {showModelSettings && (
+            
+                                        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowModelSettings(false); }}>
+            
+                                            <div className="modal-content" onClick={e => e.stopPropagation()} style={{width: '600px', textAlign: 'left'}}>
+            
+                                                <button className="modal-close" onClick={() => setShowModelSettings(false)}>&times;</button>
+            
+                                                
+            
+                                                <div style={{padding: '0 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+                            <h3 style={{fontSize: '1.1rem', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0}}>{t("modelSettings")}</h3>
+                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                <span style={{marginRight: '15px', fontSize: '0.9rem', color: status.includes("Error") ? 'red' : 'green'}}>{status}</span>
+                                <button className="btn-primary" style={{padding: '5px 15px'}} onClick={save}>{t("saveChanges")}</button>
+                            </div>
+                        </div>
+
+                        <div className="tabs" style={{padding: '0 10px'}}>
+                            {config.models.map((model, index) => (
+                                <button
+                                    key={model.is_custom ? "custom-tab" : model.model_name}
+                                    className={`tab-button ${activeTab === index ? 'active' : ''}`}
+                                    onClick={() => setActiveTab(index)}
+                                >
+                                    {model.is_custom ? t("custom") || "Custom" : model.model_name}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div style={{padding: '0 10px'}}>
+                            {currentModelConfig.is_custom && (
+                            <div className="form-group">
+                                <label className="form-label">{t("modelName")}</label>
+                                <input 
+                                    type="text" 
+                                    className="form-input"
+                                    value={currentModelConfig.model_name} 
+                                    onChange={(e) => handleModelNameChange(e.target.value)}
+                                    placeholder="e.g. claude-3-5-sonnet-20241022"
+                                />
+                            </div>
+                            )}
+
+                            <div className="form-group">
+                                <label className="form-label">{t("apiKey")}</label>
+                                <div style={{display: 'flex', gap: '10px'}}>
+                                    <input 
+                                        type="password" 
+                                        className="form-input"
+                                        value={currentModelConfig.api_key} 
+                                        onChange={(e) => handleApiKeyChange(e.target.value)}
+                                        placeholder={`${t("enterKey")} (${currentModelConfig.model_name})`}
+                                    />
+                                    {!currentModelConfig.is_custom && (
+                                    <button 
+                                        className="btn-subscribe" 
+                                        onClick={() => handleOpenSubscribe(currentModelConfig.model_name)}
+                                    >
+                                        {t("getKey")}
+                                    </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {currentModelConfig.is_custom && (
+                            <div className="form-group">
+                                <label className="form-label">{t("apiEndpoint")}</label>
+                                <input 
+                                    type="text" 
+                                    className="form-input"
+                                    value={currentModelConfig.model_url} 
+                                    onChange={(e) => handleModelUrlChange(e.target.value)}
+                                    placeholder="https://api.example.com/v1"
+                                />
+                            </div>
+                            )}
                         </div>
                     </div>
-
-                    <div style={{marginBottom: '10px'}}>
-                        <label className="form-label" style={{display:'flex', alignItems:'center', cursor:'pointer'}}>
-                            <input 
-                                type="checkbox" 
-                                checked={yoloMode}
-                                onChange={(e) => setYoloMode(e.target.checked)}
-                                style={{marginRight: '8px', transform: 'scale(1.2)'}}
-                            />
-                            <span style={{fontWeight: 600}}>{t("yoloMode")}</span> 
-                            <span style={{marginLeft:'8px', color:'#ef4444', fontSize:'0.85em'}}>{t("dangerouslySkip")}</span>
-                        </label>
-                    </div>
-                    <button className="btn-launch" onClick={() => LaunchClaude(yoloMode, config?.project_dir || "")}>
-                        {t("launchBtn")}
-                    </button>
                 </div>
+            )}
 
-                <div style={{margin: '25px 20px', borderTop: '2px solid #3b82f6', opacity: 0.6}}></div>
+            {/* Project Manager Modal */}
+            {showProjectManager && (
+                <div className="modal-overlay">
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{width: '500px', textAlign: 'left'}}>
+                        <button className="modal-close" onClick={() => setShowProjectManager(false)}>&times;</button>
+                        <h3 style={{marginTop: 0, color: '#3b82f6', marginBottom: '20px'}}>{t("projectManagement")}</h3>
+                        
+                        <div style={{maxHeight: '300px', overflowY: 'auto', marginBottom: '10px'}}>
+                            {tempProjects.map((proj: any) => (
+                                <div key={proj.id} style={{display: 'flex', alignItems: 'center', marginBottom: '10px', gap: '10px'}}>
+                                    <input 
+                                        type="text" 
+                                        className="form-input" 
+                                        value={proj.name}
+                                        onChange={(e) => handleRenameTempProject(proj.id, e.target.value)}
+                                        placeholder={t("projectName")}
+                                        style={{flex: 1}}
+                                    />
+                                    {tempProjects.length > 1 && (
+                                        <button 
+                                            className="btn-link" 
+                                            style={{color: '#ef4444', borderColor: '#ef4444', padding: '5px 10px', whiteSpace: 'nowrap'}}
+                                            onClick={() => handleDeleteTempProject(proj.id)}
+                                        >
+                                            {t("delete")}
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
 
-                <div style={{padding: '0 20px'}}>
-                    <h3 style={{fontSize: '0.8rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px'}}>{t("modelSettings")}</h3>
-                </div>
-
-                <div className="tabs">
-                    {config.models.map((model, index) => (
-                        <button
-                            key={model.is_custom ? "custom-tab" : model.model_name}
-                            className={`tab-button ${activeTab === index ? 'active' : ''}`}
-                            onClick={() => setActiveTab(index)}
-                        >
-                            {model.is_custom ? t("custom") || "Custom" : model.model_name}
-                        </button>
-                    ))}
-                </div>
-
-                {currentModelConfig.is_custom && (
-                <div className="form-group">
-                    <label className="form-label">{t("modelName")}</label>
-                    <input 
-                        type="text" 
-                        className="form-input"
-                        value={currentModelConfig.model_name} 
-                        onChange={(e) => handleModelNameChange(e.target.value)}
-                        placeholder="e.g. claude-3-5-sonnet-20241022"
-                    />
-                </div>
-                )}
-
-                <div className="form-group">
-                    <label className="form-label">{t("apiKey")}</label>
-                    <div style={{display: 'flex', gap: '10px'}}>
-                        <input 
-                            type="password" 
-                            className="form-input"
-                            value={currentModelConfig.api_key} 
-                            onChange={(e) => handleApiKeyChange(e.target.value)}
-                            placeholder={`${t("enterKey")} (${currentModelConfig.model_name})`}
-                        />
-                        {!currentModelConfig.is_custom && (
-                        <button 
-                            className="btn-subscribe" 
-                            onClick={() => handleOpenSubscribe(currentModelConfig.model_name)}
-                        >
-                            {t("getKey")}
-                        </button>
+                        {managerStatus && (
+                            <div style={{color: '#ef4444', fontSize: '0.85rem', marginBottom: '15px', fontWeight: 500}}>
+                                {managerStatus}
+                            </div>
                         )}
+
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                            <button className="btn-primary" style={{width: '100%', background: 'transparent', border: '1px dashed #3b82f6', color: '#3b82f6'}} onClick={handleAddTempProject}>
+                                {t("addNewProject")}
+                            </button>
+                            <button 
+                                className="btn-primary" 
+                                style={{width: '100%', opacity: managerStatus ? 0.5 : 1, cursor: managerStatus ? 'not-allowed' : 'pointer'}} 
+                                onClick={saveProjectManagerChanges}
+                                disabled={!!managerStatus}
+                            >
+                                {t("saveChanges")}
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                {currentModelConfig.is_custom && (
-                <div className="form-group">
-                    <label className="form-label">{t("apiEndpoint")}</label>
-                    <input 
-                        type="text" 
-                        className="form-input"
-                        value={currentModelConfig.model_url} 
-                        onChange={(e) => handleModelUrlChange(e.target.value)}
-                        placeholder="https://api.example.com/v1"
-                    />
-                </div>
-                )}
-
-            </div>
-
-            <div style={{padding: '20px', borderTop: '1px solid #e5e7eb', backgroundColor: '#fff', textAlign: 'right'}}>
-                <span style={{marginRight: '15px', fontSize: '0.9rem', color: status.includes("Error") ? 'red' : 'green'}}>{status}</span>
-                <button className="btn-primary" onClick={save}>{t("saveChanges")}</button>
-            </div>
+            )}
 
             {showAbout && (
-                <div className="modal-overlay" onClick={() => setShowAbout(false)}>
+                <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowAbout(false); }}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setShowAbout(false)}>&times;</button>
                         <h3 style={{marginTop: 0, color: '#3b82f6'}}>Claude Code Easy Suite</h3>

@@ -6,6 +6,10 @@ export function CheckEnvironment() {
   return window['go']['main']['App']['CheckEnvironment']();
 }
 
+export function GetUserHomeDir() {
+  return window['go']['main']['App']['GetUserHomeDir']();
+}
+
 export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }

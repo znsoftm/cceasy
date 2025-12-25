@@ -230,7 +230,7 @@ body {
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s;
-    text-align: center;
+    text-align: left;
     box-shadow: var(--shadow-sm);
     font-size: 0.9rem;
 }

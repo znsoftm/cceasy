@@ -1,5 +1,23 @@
 export namespace main {
 	
+	export class ProjectConfig {
+	    id: string;
+	    name: string;
+	    path: string;
+	    yolo_mode: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ProjectConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.path = source["path"];
+	        this.yolo_mode = source["yolo_mode"];
+	    }
+	}
 	export class ModelConfig {
 	    model_name: string;
 	    model_url: string;
@@ -22,6 +40,8 @@ export namespace main {
 	    current_model: string;
 	    project_dir: string;
 	    models: ModelConfig[];
+	    projects: ProjectConfig[];
+	    current_project: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new AppConfig(source);
@@ -32,6 +52,8 @@ export namespace main {
 	        this.current_model = source["current_model"];
 	        this.project_dir = source["project_dir"];
 	        this.models = this.convertValues(source["models"], ModelConfig);
+	        this.projects = this.convertValues(source["projects"], ProjectConfig);
+	        this.current_project = source["current_project"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -52,6 +74,7 @@ export namespace main {
 		    return a;
 		}
 	}
+	
 
 }
 

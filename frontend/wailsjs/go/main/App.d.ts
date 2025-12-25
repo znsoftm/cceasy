@@ -4,6 +4,8 @@ import {main} from '../models';
 
 export function CheckEnvironment():Promise<void>;
 
+export function GetUserHomeDir():Promise<string>;
+
 export function Greet(arg1:string):Promise<string>;
 
 export function LaunchClaude(arg1:boolean,arg2:string):Promise<void>;
