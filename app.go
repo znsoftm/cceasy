@@ -488,6 +488,59 @@ func (a *App) CheckUpdate(currentVersion string) (UpdateResult, error) {
 	return UpdateResult{HasUpdate: false, LatestVersion: highestVersion}, nil
 }
 
+func (a *App) RecoverCC() error {
+	a.emitRecoverLog("Starting recovery process...")
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		a.emitRecoverLog(fmt.Sprintf("Error getting home dir: %v", err))
+		return err
+	}
+
+	// Remove ~/.claude directory
+	claudeDir := filepath.Join(home, ".claude")
+	a.emitRecoverLog(fmt.Sprintf("Checking directory: %s", claudeDir))
+	if _, err := os.Stat(claudeDir); !os.IsNotExist(err) {
+		a.emitRecoverLog("Found .claude directory. Removing...")
+		if err := os.RemoveAll(claudeDir); err != nil {
+			a.emitRecoverLog(fmt.Sprintf("Failed to remove .claude directory: %v", err))
+			return fmt.Errorf("failed to remove .claude directory: %w", err)
+		}
+		a.emitRecoverLog("Successfully removed .claude directory.")
+	} else {
+		a.emitRecoverLog(".claude directory not found, skipping.")
+	}
+
+	// Remove ~/.claude.json file
+	claudeJsonPath := filepath.Join(home, ".claude.json")
+	a.emitRecoverLog(fmt.Sprintf("Checking file: %s", claudeJsonPath))
+	if _, err := os.Stat(claudeJsonPath); !os.IsNotExist(err) {
+		a.emitRecoverLog("Found .claude.json file. Removing...")
+		if err := os.Remove(claudeJsonPath); err != nil && !os.IsNotExist(err) {
+			a.emitRecoverLog(fmt.Sprintf("Failed to remove .claude.json file: %v", err))
+			return fmt.Errorf("failed to remove .claude.json file: %w", err)
+		}
+		a.emitRecoverLog("Successfully removed .claude.json file.")
+	} else {
+		a.emitRecoverLog(".claude.json file not found, skipping.")
+	}
+
+	a.emitRecoverLog("Recovery process completed successfully.")
+	return nil
+}
+
+func (a *App) emitRecoverLog(msg string) {
+	runtime.EventsEmit(a.ctx, "recover-log", msg)
+}
+
+func (a *App) ShowMessage(title, message string) {
+	runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+		Type:    runtime.InfoDialog,
+		Title:   title,
+		Message: message,
+	})
+}
+
 // compareVersions returns 1 if v1 > v2, -1 if v1 < v2, 0 if equal
 func compareVersions(v1, v2 string) int {
 	parts1 := strings.Split(v1, ".")

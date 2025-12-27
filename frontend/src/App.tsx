@@ -2,7 +2,7 @@ import {useEffect, useState, useRef} from 'react';
 import './App.css';
 import {buildNumber} from './version';
 import appIcon from './assets/images/appicon.png';
-import {LoadConfig, SaveConfig, CheckEnvironment, ResizeWindow, LaunchClaude, SelectProjectDir, SetLanguage, GetUserHomeDir, CheckUpdate} from "../wailsjs/go/main/App";
+import {LoadConfig, SaveConfig, CheckEnvironment, ResizeWindow, LaunchClaude, SelectProjectDir, SetLanguage, GetUserHomeDir, CheckUpdate, RecoverCC, ShowMessage} from "../wailsjs/go/main/App";
 import {WindowHide, EventsOn, EventsOff, BrowserOpenURL, ClipboardGetText, Quit} from "../wailsjs/runtime";
 import {main} from "../wailsjs/go/models";
 
@@ -20,7 +20,8 @@ const translations: any = {
         "title": "Claude Code Easy Suite",
         "about": "About",
         "manual": "Manual",
-        "cs146s": "CS146s CN",
+        "cs146s": "Online Course",
+        "recoverCC": "Recover CC",
         "hide": "Hide",
         "launch": "LAUNCH",
         "projectDir": "Project Directory",
@@ -38,6 +39,14 @@ const translations: any = {
         "saveChanges": "Save & Close",
         "saving": "Saving...",
         "saved": "Saved successfully!",
+        "recovering": "Recovering...",
+        "recoverSuccess": "Recovery successful!",
+        "recoverSuccessAlert": "Claude Code has been reset. Please DO NOT click 'Launch Claude Code' here. Instead, open your terminal manually and run 'claude' to complete the native setup.",
+        "confirmRecover": "Are you sure you want to recover Claude Code to its initial state? This will clear all configurations.",
+        "recoverTitle": "Recover Claude Code",
+        "recoverWarning": "Warning: This will permanently delete your Claude Code configurations and authentication tokens. This action cannot be undone.",
+        "startRecover": "Start Recovery",
+        "close": "Close",
         "manageProjects": "Manage Projects",
         "projectManagement": "Project Management",
         "projectName": "Project Name",
@@ -62,7 +71,8 @@ const translations: any = {
         "title": "Claude Code Easy Suite",
         "about": "关于",
         "manual": "使用说明",
-        "cs146s": "CS146s 中文版",
+        "cs146s": "在线课程",
+        "recoverCC": "恢复CC",
         "hide": "隐藏",
         "launch": "启动",
         "projectDir": "项目目录",
@@ -80,6 +90,14 @@ const translations: any = {
         "saveChanges": "保存并关闭",
         "saving": "保存中...",
         "saved": "保存成功！",
+        "recovering": "正在恢复...",
+        "recoverSuccess": "恢复成功！",
+        "recoverSuccessAlert": "Claude Code 已重置。请注意：不要点击本程序的“启动 Claude Code”按钮。请自行手动打开终端窗口并运行 'claude' 命令以恢复原厂设置。",
+        "confirmRecover": "确定要将 Claude Code 恢复到初始状态吗？这将清除所有配置。",
+        "recoverTitle": "恢复 Claude Code",
+        "recoverWarning": "警告：这将永久删除您的 Claude Code 配置和认证令牌。此操作无法撤销。",
+        "startRecover": "开始恢复",
+        "close": "关闭",
         "manageProjects": "项目管理",
         "projectManagement": "项目管理",
         "projectName": "项目名称",
@@ -104,7 +122,8 @@ const translations: any = {
         "title": "Claude Code Easy Suite",
         "about": "關於",
         "manual": "使用說明",
-        "cs146s": "CS146s 中文版",
+        "cs146s": "線上課程",
+        "recoverCC": "恢復CC",
         "hide": "隱藏",
         "launch": "啟動",
         "projectDir": "專案目錄",
@@ -122,6 +141,14 @@ const translations: any = {
         "saveChanges": "儲存並關閉",
         "saving": "儲存中...",
         "saved": "儲存成功！",
+        "recovering": "正在恢復...",
+        "recoverSuccess": "恢復成功！",
+        "recoverSuccessAlert": "Claude Code 已重置。請注意：不要點擊本程序的“啟動 Claude Code”按鈕。請自行手動打開終端窗口並運行 'claude' 命令以恢復原廠設置。",
+        "confirmRecover": "確定要將 Claude Code 恢復到初始狀態嗎？這將清除所有配置。",
+        "recoverTitle": "恢復 Claude Code",
+        "recoverWarning": "警告：這將永久刪除您的 Claude Code 配置和認證令牌。此操作無法撤銷。",
+        "startRecover": "開始恢復",
+        "close": "關閉",
         "manageProjects": "專案管理",
         "projectManagement": "專案管理",
         "projectName": "專案名稱",
@@ -145,7 +172,8 @@ const translations: any = {
         "title": "Claude Code Easy Suite",
         "about": "정보",
         "manual": "매뉴얼",
-        "cs146s": "CS146s CN",
+        "cs146s": "온라인 강의",
+        "recoverCC": "CC 초기화",
         "hide": "숨기기",
         "launch": "시작",
         "projectDir": "프로젝트 디렉토리",
@@ -163,6 +191,14 @@ const translations: any = {
         "saveChanges": "저장 및 닫기",
         "saving": "저장 중...",
         "saved": "저장 성공!",
+        "recovering": "복구 중...",
+        "recoverSuccess": "복구 성공!",
+        "recoverSuccessAlert": "Claude Code가 초기화되었습니다.",
+        "confirmRecover": "Claude Code를 초기 상태로 복구하시겠습니까? 모든 설정이 지워집니다.",
+        "recoverTitle": "Claude Code 초기화",
+        "recoverWarning": "경고: Claude Code 설정 및 인증 토큰이 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다.",
+        "startRecover": "초기화 시작",
+        "close": "닫기",
         "manageProjects": "프로젝트 관리",
         "projectManagement": "프로젝트 관리",
         "projectName": "프로젝트 이름",
@@ -181,7 +217,8 @@ const translations: any = {
         "title": "Claude Code Easy Suite",
         "about": "バージョン情報",
         "manual": "マニュアル",
-        "cs146s": "CS146s CN",
+        "cs146s": "オンライン講座",
+        "recoverCC": "CCを復元",
         "hide": "隠す",
         "launch": "起動",
         "projectDir": "プロジェクト・ディレクトリ",
@@ -199,6 +236,14 @@ const translations: any = {
         "saveChanges": "保存して閉じる",
         "saving": "保存中...",
         "saved": "保存しました！",
+        "recovering": "復元中...",
+        "recoverSuccess": "復元成功！",
+        "recoverSuccessAlert": "Claude Code はリセットされました。",
+        "confirmRecover": "Claude Code を初期状態に復元しますか？すべての設定が消去されます。",
+        "recoverTitle": "Claude Code の復元",
+        "recoverWarning": "警告：Claude Code の設定と認証トークンが完全に削除されます。この操作は取り消せません。",
+        "startRecover": "復元を開始",
+        "close": "閉じる",
         "manageProjects": "プロジェクト管理",
         "projectManagement": "プロジェクト管理",
         "projectName": "プロジェクト名",
@@ -217,7 +262,8 @@ const translations: any = {
         "title": "Claude Code Easy Suite",
         "about": "Über",
         "manual": "Handbuch",
-        "cs146s": "CS146s CN",
+        "cs146s": "Online-Kurs",
+        "recoverCC": "CC wiederherstellen",
         "hide": "Verbergen",
         "launch": "Starten",
         "projectDir": "Projektverzeichnis",
@@ -235,6 +281,14 @@ const translations: any = {
         "saveChanges": "Speichern & Schließen",
         "saving": "Speichern...",
         "saved": "Erfolgreich gespeichert!",
+        "recovering": "Wiederherstellen...",
+        "recoverSuccess": "Wiederherstellung erfolgreich!",
+        "recoverSuccessAlert": "Claude Code wurde zurückgesetzt.",
+        "confirmRecover": "Möchten Sie Claude Code wirklich auf den Ausgangszustand zurücksetzen? Alle Konfigurationen werden gelöscht.",
+        "recoverTitle": "Claude Code wiederherstellen",
+        "recoverWarning": "Warnung: Dies löscht Ihre Claude Code-Konfigurationen und Authentifizierungstoken dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "startRecover": "Wiederherstellung starten",
+        "close": "Schließen",
         "manageProjects": "Projektverwaltung",
         "projectManagement": "Projektverwaltung",
         "projectName": "Projektname",
@@ -253,7 +307,8 @@ const translations: any = {
         "title": "Claude Code Easy Suite",
         "about": "À propos",
         "manual": "Manuel",
-        "cs146s": "CS146s CN",
+        "cs146s": "Cours en ligne",
+        "recoverCC": "Récupérer CC",
         "hide": "Masquer",
         "launch": "Lancer",
         "projectDir": "Répertoire du projet",
@@ -271,6 +326,14 @@ const translations: any = {
         "saveChanges": "Enregistrer et Fermer",
         "saving": "Enregistrement...",
         "saved": "Enregistré avec succès !",
+        "recovering": "Récupération...",
+        "recoverSuccess": "Récupération réussie !",
+        "recoverSuccessAlert": "Claude Code a été réinitialisé.",
+        "confirmRecover": "Êtes-vous sûr de vouloir récupérer Claude Code à son état initial ? Toutes les configurations seront effacées.",
+        "recoverTitle": "Récupérer Claude Code",
+        "recoverWarning": "Attention : Cela supprimera définitivement vos configurations et jetons d'authentification Claude Code. Cette action est irréversible.",
+        "startRecover": "Démarrer la récupération",
+        "close": "Fermer",
         "manageProjects": "Gestion de projet",
         "projectManagement": "Gestion de projet",
         "projectName": "Nom du projet",
@@ -305,6 +368,12 @@ function App() {
     const [managerStatus, setManagerStatus] = useState("");
     const [lang, setLang] = useState("en");
 
+    // Recover Modal State
+    const [showRecoverModal, setShowRecoverModal] = useState(false);
+    const [recoverLogs, setRecoverLogs] = useState<string[]>([]);
+    const [recoverStatus, setRecoverStatus] = useState<"idle" | "recovering" | "success" | "error">("idle");
+    const recoverLogRef = useRef<HTMLDivElement>(null);
+
     const logEndRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
@@ -312,6 +381,12 @@ function App() {
             logEndRef.current.scrollTop = logEndRef.current.scrollHeight;
         }
     }, [envLogs]);
+
+    useEffect(() => {
+        if (recoverLogRef.current) {
+            recoverLogRef.current.scrollTop = recoverLogRef.current.scrollHeight;
+        }
+    }, [recoverLogs]);
 
     useEffect(() => {
         // Language detection
@@ -341,7 +416,7 @@ function App() {
             }
         };
         const doneHandler = () => {
-            ResizeWindow(902, 480);
+            ResizeWindow(1038, 480);
             setIsLoading(false);
         };
 
@@ -609,6 +684,27 @@ function App() {
         });
     };
 
+    const handleStartRecover = () => {
+        setRecoverStatus("recovering");
+        setRecoverLogs([]);
+        
+        // Setup listener
+        EventsOn("recover-log", (msg: string) => {
+            setRecoverLogs(prev => [...prev, msg]);
+        });
+
+        RecoverCC().then(() => {
+            setRecoverStatus("success");
+            setRecoverLogs(prev => [...prev, "DONE!"]);
+            EventsOff("recover-log");
+            ShowMessage(t("recoverTitle"), t("recoverSuccessAlert"));
+        }).catch((err) => {
+            setRecoverStatus("error");
+            setRecoverLogs(prev => [...prev, "Error: " + err]);
+            EventsOff("recover-log");
+        });
+    };
+
     if (isLoading) {
         return (
             <div style={{
@@ -793,6 +889,15 @@ function App() {
                             {t("cs146s")}
                         </button>
                         <button 
+                            className="btn-link" 
+                            onClick={() => {
+                                setRecoverStatus("idle");
+                                setShowRecoverModal(true);
+                            }}
+                        >
+                            {t("recoverCC")}
+                        </button>
+                        <button 
                             onClick={WindowHide} 
                             className="btn-hide"
                         >
@@ -967,7 +1072,7 @@ function App() {
                                             
                                                                                                                                                                                                         </div>
                                             
-                                                                                                                                                                            
+                                                                                                                                                                                                            
                                             
                                                                                                                                                                                                         <div style={{marginBottom: '0px'}}>
                                             
@@ -1007,7 +1112,8 @@ function App() {
                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                         LaunchClaude(currentProject.yolo_mode, currentProject.path || "")
                                                                                                                                                                                                                                                     
-                                                                                                                                                                                                                                    }}>                                            
+                                                                                                                                                                                                                                    }}>
+                                            
                                                                                                                                                                                                             {t("launchBtn")}
                                             
                                                                                                                                                                                                         </button>
@@ -1020,12 +1126,13 @@ function App() {
                                             
                                                                                                                                                                                                     </>
                                             
-                                                                                                                                                                                                    )}                                    </div>
+                                                                                                                                                                                                    )}
+                                                                                                                                                                                            </div>
                                 </div>
                 
                                         </div>
                             
-                                        {/* Model Settings Modal */}            
+                                        {/* Model Settings Modal */}
                                     {showModelSettings && (
             
                                         <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowModelSettings(false); }}>
@@ -1113,6 +1220,72 @@ function App() {
                                 />
                             </div>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Recover CC Modal */}
+            {showRecoverModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{width: '500px', textAlign: 'left'}}>
+                        {recoverStatus !== "recovering" && (
+                            <button className="modal-close" onClick={() => setShowRecoverModal(false)}>&times;</button>
+                        )}
+                        <h3 style={{marginTop: 0, color: '#fb923c', marginBottom: '15px'}}>{t("recoverTitle")}</h3>
+                        
+                        {recoverStatus === "idle" && (
+                            <div style={{marginBottom: '20px', color: '#ef4444', border: '1px solid #fca5a5', padding: '10px', borderRadius: '6px', backgroundColor: '#fef2f2'}}>
+                                <p style={{margin: 0, fontWeight: 500}}>{t("recoverWarning")}</p>
+                            </div>
+                        )}
+
+                        {recoverStatus !== "idle" && (
+                            <div style={{
+                                width: '100%',
+                                height: '200px',
+                                backgroundColor: '#1e1e1e',
+                                color: '#e5e5e5',
+                                padding: '10px',
+                                borderRadius: '6px',
+                                fontFamily: 'monospace',
+                                fontSize: '0.85rem',
+                                overflowY: 'auto',
+                                marginBottom: '20px'
+                            }}>
+                                {recoverLogs.map((log, i) => (
+                                    <div key={i} style={{marginBottom: '2px'}}>{log}</div>
+                                ))}
+                                <div ref={recoverLogRef} />
+                            </div>
+                        )}
+
+                        <div style={{display: 'flex', justifyContent: 'flex-end', gap: '10px'}}>
+                            {recoverStatus === "idle" ? (
+                                <>
+                                    <button 
+                                        className="btn-primary" 
+                                        style={{backgroundColor: '#6b7280'}}
+                                        onClick={() => setShowRecoverModal(false)}
+                                    >
+                                        {t("close")}
+                                    </button>
+                                    <button 
+                                        className="btn-primary" 
+                                        style={{backgroundColor: '#ef4444'}}
+                                        onClick={handleStartRecover}
+                                    >
+                                        {t("startRecover")}
+                                    </button>
+                                </>
+                            ) : recoverStatus === "success" || recoverStatus === "error" ? (
+                                <button 
+                                    className="btn-primary" 
+                                    onClick={() => setShowRecoverModal(false)}
+                                >
+                                    {t("close")}
+                                </button>
+                            ) : null}
                         </div>
                     </div>
                 </div>

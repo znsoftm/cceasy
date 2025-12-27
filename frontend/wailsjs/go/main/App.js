@@ -41,3 +41,11 @@ export function SelectProjectDir() {
 export function SetLanguage(arg1) {
   return window['go']['main']['App']['SetLanguage'](arg1);
 }
+
+export function RecoverCC() {
+  return window['go']['main']['App']['RecoverCC']();
+}
+
+export function ShowMessage(arg1, arg2) {
+  return window['go']['main']['App']['ShowMessage'](arg1, arg2);
+}
